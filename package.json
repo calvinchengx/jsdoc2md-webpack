@@ -1,26 +1,26 @@
 {
-  "name": "jsdoc2md-webpack",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/calvinchengx/jsdoc2md-webpack.git"
-  },
-  "author": "Calvin Cheng",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/calvinchengx/jsdoc2md-webpack/issues"
-  },
-  "homepage": "https://github.com/calvinchengx/jsdoc2md-webpack#readme",
-  "devDependencies": {
-    "babel-preset-env": "^1.7.0",
-    "babel-register": "^6.26.0"
-  },
-  "dependencies": {
-    "jsdoc-to-markdown": "^4.0.1"
-  }
+    "name": "jsdoc2md-webpack",
+    "version": "1.0.1",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/calvinchengx/jsdoc2md-webpack.git"
+    },
+    "author": "Calvin Cheng",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/calvinchengx/jsdoc2md-webpack/issues"
+    },
+    "homepage": "https://github.com/calvinchengx/jsdoc2md-webpack#readme",
+    "devDependencies": {
+        "babel-preset-env": "^1.7.0",
+        "babel-register": "^6.26.0"
+    },
+    "dependencies": {
+        "jsdoc-to-markdown": "^4.0.1"
+    }
 }
