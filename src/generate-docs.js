@@ -15,14 +15,12 @@ function generateDocs(sourceFiles, outputDir) {
         if (e.code !== 'EEXIST') throw e
     }
 
-    /* reduce templateData to an array of class names */
+    // handle functions
     const functionNames = templateData.reduce((functionNames, identifier) => {
-        // console.log("5", functionNames)
         if (identifier.kind === 'function') functionNames.push(identifier.name)
         return functionNames
     }, [])
 
-    /* create a documentation file for each class */
     for (const functionName of functionNames) {
         const template = `{{#function name ="${functionName}"}}{{>docs}}{{/function}}`
         const output = jsdoc2md.renderSync({
@@ -31,6 +29,22 @@ function generateDocs(sourceFiles, outputDir) {
         })
 
         fs.writeFileSync(path.resolve(outputDir, `${functionName}.md`), output)
+    }
+
+    // handle classes
+    const classNames = templateData.reduce((classNames, identifier) => {
+        if (identifier.kind === 'class') classNames.push(identifier.name)
+        return classNames
+    }, [])
+
+    for (const className of classNames) {
+        const template = `{{#class name ="${className}"}}{{>docs}}{{/class}}`
+        const output = jsdoc2md.renderSync({
+            data: templateData,
+            template
+        })
+
+        fs.writeFileSync(path.resolve(outputDir, `${className}.md`), output)
     }
 }
 
