@@ -38,6 +38,11 @@ class JSDoc2MdWebpackPlugin {
             }
         )
     }
+
+    // our custom generateDocs function which uses jsdoc2md
+    static generateDocs(sourceFiles, outputDir) {
+        generateDocs(sourceFiles, outputDir)
+    }
 }
 
 export default JSDoc2MdWebpackPlugin
