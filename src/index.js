@@ -1,14 +1,17 @@
 import generateDocs from './generate-docs'
-import path from 'path'
+import { resolve } from 'path'
 
 class JSDoc2MdWebpackPlugin {
     /**
-     *
-     * @param {string} outputDir output directory where generated markdown files are created
-     *
+     * @param {object} options allows us to set inputDir (string), inputDirPrefix (string), outputDir (string) and changedFiles ({string|string[]})
+     * changedFiles is one or more filenames to process.  Accepts globs (e.g. `*.js`).
+     * if changedFiles is provided, then only those files will be parsed and documentation re-generated for those files
      */
-    constructor(outputDir) {
-        this.outputDir = outputDir
+    constructor(options) {
+        this.inputDir = options.inputDir
+        this.inputDirPrefix = options.inputDirPrefix || 'src'
+        this.outputDir = options.outputDir
+        this.changedFiles = options.changedFiles
     }
 
     // using webpack compiler hooks, update docs whenever a js file gets changed
@@ -17,10 +20,6 @@ class JSDoc2MdWebpackPlugin {
             'JSDoc2MdWebpackPlugin',
             (compilation, callback) => {
                 const context = compilation.compiler.options.context
-
-                if (this.outputDir === undefined) {
-                    this.outputDir = path.resolve(context, 'docs')
-                }
 
                 // find all the js files that are changed (i.e. edited)
                 const changedTimes =
@@ -31,7 +30,13 @@ class JSDoc2MdWebpackPlugin {
 
                 // generate documentation from docstring in source code, into markdown
                 if (changedFiles !== '') {
-                    generateDocs(changedFiles, this.outputDir)
+                    let options = {
+                        inputDir: this.inputDir || context,
+                        inputDirPrefix: this.inputDirPrefix,
+                        outputDir: this.outputDir || resolve(context, 'docs'),
+                        changedFiles
+                    }
+                    generateDocs(options)
                 }
 
                 callback()
@@ -40,8 +45,8 @@ class JSDoc2MdWebpackPlugin {
     }
 
     // our custom generateDocs function which uses jsdoc2md
-    static generateDocs(sourceFiles, outputDir) {
-        generateDocs(sourceFiles, outputDir)
+    static generateDocs(options) {
+        generateDocs(options)
     }
 }
 
