@@ -1,5 +1,6 @@
 import jsdoc2md from 'jsdoc-to-markdown'
 import fs from 'fs'
+import { mkdir } from './utils'
 import { resolve, relative, join } from 'path'
 import debugModule from 'debug'
 const debug = debugModule('generate-docs')
@@ -22,7 +23,7 @@ function generateDocs(options) {
 
     // create outputDir if it does not exist
     try {
-        fs.mkdirSync(outputDir)
+        mkdir(outputDir)
     } catch (e) {
         if (e.code !== 'EEXIST') throw e
     }
@@ -85,7 +86,7 @@ function writeMarkdownForKinds(mapOfKinds, outputDir, data, ...kinds) {
             })
             // make the directory if it doesn't exist
             try {
-                fs.mkdirSync(dir, { recursive: true })
+                mkdir(dir)
             } catch (e) {
                 if (e.code !== 'EEXIST') throw e
             }
