@@ -14,13 +14,11 @@ function generateDocs(options) {
     if (changedFiles !== undefined) {
         sourceFiles = changedFiles
     }
-    // console.log(2222, sourceFiles)
 
     // get template data
     const templateData = jsdoc2md.getTemplateDataSync({
         files: sourceFiles
     })
-    // console.log(333, templateData)
 
     // create outputDir if it does not exist
     try {
@@ -29,13 +27,10 @@ function generateDocs(options) {
         if (e.code !== 'EEXIST') throw e
     }
 
-    // console.log(444)
-
     const accumulator = templateData.reduce((accumulator, identifier) => {
         accumulator.push(identifier.kind)
         return accumulator
     }, [])
-    // console.log(555, accumulator)
 
     // kinds is an array of strings where the string could be
     // 'module', 'constructor', 'function', 'enum', 'constant', 'member', 'class'
@@ -52,8 +47,6 @@ function generateDocs(options) {
             if (identifier.kind === kind) {
                 let nestedPath
                 if (identifier.meta !== undefined) {
-                    console.log(inputDirWithPrefix)
-                    console.log(identifier.meta.path)
                     nestedPath = relative(
                         inputDirWithPrefix,
                         identifier.meta.path
