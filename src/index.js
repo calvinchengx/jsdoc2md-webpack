@@ -11,7 +11,7 @@ class JSDoc2MdWebpackPlugin {
         this.inputDirPrefix = options.inputDirPrefix || 'src'
         this.inputDir = options.inputDir
         this.outputDir = options.outputDir
-        this.documentor = options.documentor
+        this.documentorConfig = options.documentorConfig
         this.copyToDir = options.copyToDir
         this.changedFiles = options.changedFiles
     }
@@ -36,7 +36,7 @@ class JSDoc2MdWebpackPlugin {
                         inputDirPrefix: this.inputDirPrefix,
                         inputDir: this.inputDir || context,
                         outputDir: this.outputDir || resolve(context, 'docs'),
-                        documentor: this.documentor,
+                        documentorConfig: this.documentorConfig,
                         copyToDir: this.copyToDir,
                         changedFiles
                     }

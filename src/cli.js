@@ -4,6 +4,7 @@ import program from 'commander'
 import packageJson from '../package.json'
 import path from 'path'
 import generateDocs from './generate-docs'
+import fs from 'fs'
 
 program
     .version(packageJson.version, '-v, --version')
@@ -25,11 +26,7 @@ program
     )
     .option(
         '-d, --documentor [documentor]',
-        'Prepare our generated documentation for a specific type of documentation website, e.g. docusaurus'
-    )
-    .option(
-        '-s, --sidebarHeader [sidebarHeader]',
-        'Sidebar Header is only used by documentor docusaurus'
+        'JSON configuration to prepare our generated documentation for a specific type of documentation website, e.g. docusaurus'
     )
     .parse(process.argv)
 
@@ -44,8 +41,13 @@ const inputDir = program.inputDir || path.resolve(cwd)
 const outputDir = program.outputDir || path.resolve(cwd, 'docs')
 // further process the generated markdown output to support specific documentor, e.g. docusaurus
 const documentor = program.documentor || null
-// specific to docusaurus
-const sidebarHeader = program.sidebarHeader
+let documentorConfig
+if (documentor) {
+    documentorConfig = JSON.parse(
+        fs.readFileSync(path.resolve(cwd, documentor))
+    )
+}
+
 // further copy the generated markdown files to another directory (copyToDir is relative. We transform it to absolute path within the function)
 const copyToDir = program.copyToDir
 
@@ -54,7 +56,6 @@ generateDocs({
     inputDirPrefix,
     outputDir,
     copyToDir,
-    sidebarHeader,
-    documentor
+    documentorConfig
 })
 console.log(`Documentation generated in ${outputDir}`)

@@ -12,8 +12,7 @@ function generateDocs(options) {
         inputDir,
         inputDirPrefix,
         outputDir,
-        documentor,
-        sidebarHeader,
+        documentorConfig,
         copyToDir,
         changedFiles
     } = options
@@ -76,13 +75,14 @@ function generateDocs(options) {
     })
 
     debug(mapOfKinds['class'])
+    debugModule('sidebarJson')(documentorConfig)
 
     writeMarkdownForKinds(
         mapOfKinds,
+        inputDir,
         outputDir,
         templateData,
-        documentor,
-        sidebarHeader,
+        documentorConfig,
         'module'
     )
 
@@ -103,20 +103,29 @@ function generateDocs(options) {
  * @param {object} mapOfKinds - an object with the kind name as key and a list of associated objects (with keys name and nested path)
  * @param {string} outputDir - the path to the directory where our generated markdown files is created
  * @param {object} data - the template data object created by jsdoc2md.getTemplateDataSync
- * @param {string} documentor - the kind of documentation website renderer that we will generate for. By default, we don't do anything extra. Default is null.
+ * @param {string} documentorConfig - the kind of documentation website renderer that we will generate for. By default, we don't do anything extra. Default is null.
  * @param {string} sidebarHeader - the directory prefix that we want because the documentor docusaurus can use it to nest generated docs.
  * @param  {...string} kinds - an array of string that can be 'module', 'constructor', 'function', 'enum', 'constant', 'member', 'class'
  */
+
 function writeMarkdownForKinds(
     mapOfKinds,
+    inputDir,
     outputDir,
     data,
-    documentor,
-    sidebarHeader,
+    documentorConfig,
     ...kinds
 ) {
     // for supporting docusaurus
-    let sidebarJson = []
+    let {
+        documentor,
+        sidebarsHeader,
+        sidebarsTarget,
+        sidebarsJson,
+        copyJsonToDir
+    } = documentorConfig
+
+    let sidebarsTargetList = []
 
     for (const kind of kinds) {
         for (const kindObj of mapOfKinds[[kind]]) {
@@ -142,33 +151,46 @@ function writeMarkdownForKinds(
                 sidebar_label: title
                 ---
             */
-            debug(documentor)
-            if (documentor === null) {
+            debug(documentorConfig)
+            if (documentorConfig === null) {
                 // do nothing
                 debug('Not doing anything extra')
                 // debug(output)
-            } else if (documentor === 'docusaurus') {
-                // prepend
-                let id = kindName
-                let title = kindName
-                let sidebarLabel = kindName
-                let data = { id, title, sidebarLabel }
-                let result = docusarusTemplate(data)
-                output = `${result}\n\n${output}`
+            } else {
+                if (documentor === 'docusaurus') {
+                    // prepend
+                    let id = kindName
+                    let title = kindName
+                    let sidebarLabel = kindName
+                    let data = { id, title, sidebarLabel }
+                    let result = docusarusTemplate(data)
+                    output = `${result}\n\n${output}`
 
-                let sidebarPath = join(relative(outputDir, dir), kindName)
-                if (sidebarHeader !== undefined) {
-                    sidebarPath = join(sidebarHeader, sidebarPath)
+                    let sidebarsPath = join(relative(outputDir, dir), kindName)
+                    if (sidebarsHeader !== undefined) {
+                        sidebarsPath = join(sidebarsHeader, sidebarsPath)
+                    }
+                    sidebarsTargetList.push(sidebarsPath)
                 }
-                sidebarJson.push(sidebarPath)
             }
 
             // write out the markdown file
             fs.writeFileSync(resolve(dir, `${kindName}.md`), output)
         }
     }
+    debugModule('sidebarJson')(sidebarsTargetList)
 
-    debugModule('sidebarJson')(sidebarJson)
+    if (documentor === 'docusaurus') {
+        sidebarsJson['docs'][sidebarsTarget] = Array.from(
+            new Set(sidebarsTargetList)
+        )
+        const outputJson = resolve(outputDir, 'sidebars.json')
+        const copyJsonTo = resolve(inputDir, copyJsonToDir, 'sidebars.json')
+        fs.writeFileSync(outputJson, JSON.stringify(sidebarsJson, null, 4))
+        ncp(outputJson, copyJsonTo)
+    }
+
+    debugModule('sidebarJson')(sidebarsJson)
 }
 
 /**
