@@ -100,11 +100,12 @@ function generateDocs(options) {
 
 /**
  * Create the markdown files for each kind that we want
- * @param {object} mapOfKinds is an object with the kind name as key and a list of associated objects (with keys name and nested path)
- * @param {string} outputDir is the path to the directory where our generated markdown files is created
- * @param {object} data is the template data object created by jsdoc2md.getTemplateDataSync
- * @param {string} docuWebsite is the kind of documentation website renderer that we will generate for. By default, we don't do anything extra. Default is null.
- * @param  {...string} kinds is an array of string that can be 'module', 'constructor', 'function', 'enum', 'constant', 'member', 'class'
+ * @param {object} mapOfKinds - an object with the kind name as key and a list of associated objects (with keys name and nested path)
+ * @param {string} outputDir - the path to the directory where our generated markdown files is created
+ * @param {object} data - the template data object created by jsdoc2md.getTemplateDataSync
+ * @param {string} documentor - the kind of documentation website renderer that we will generate for. By default, we don't do anything extra. Default is null.
+ * @param {string} sidebarHeader - the directory prefix that we want because the documentor docusaurus can use it to nest generated docs.
+ * @param  {...string} kinds - an array of string that can be 'module', 'constructor', 'function', 'enum', 'constant', 'member', 'class'
  */
 function writeMarkdownForKinds(
     mapOfKinds,
