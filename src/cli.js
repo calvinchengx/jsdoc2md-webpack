@@ -4,8 +4,6 @@ import program from 'commander'
 import packageJson from '../package.json'
 import path from 'path'
 import generateDocs from './generate-docs'
-import { mkdir } from './utils'
-import { ncp } from 'ncp'
 
 program
     .version(packageJson.version, '-v, --version')
@@ -25,6 +23,14 @@ program
         '-c, --copyToDir [copyToDir]',
         'Additionally copy the generated documentation in the output directory to this given target copyToDir. Relative path.'
     )
+    .option(
+        '-d, --documentor [documentor]',
+        'Prepare our generated documentation for a specific type of documentation website, e.g. docusaurus'
+    )
+    .option(
+        '-s, --sidebarHeader [sidebarHeader]',
+        'Sidebar Header is only used by documentor docusaurus'
+    )
     .parse(process.argv)
 
 // The current working directory where this command line program is executed
@@ -36,18 +42,19 @@ const inputDirPrefix = program.inputDirPrefix || path.resolve(cwd, 'src')
 const inputDir = program.inputDir || path.resolve(cwd)
 // directory where our markdown output will reside
 const outputDir = program.outputDir || path.resolve(cwd, 'docs')
+// further process the generated markdown output to support specific documentor, e.g. docusaurus
+const documentor = program.documentor || null
+// specific to docusaurus
+const sidebarHeader = program.sidebarHeader
+// further copy the generated markdown files to another directory (copyToDir is relative. We transform it to absolute path within the function)
+const copyToDir = program.copyToDir
 
-generateDocs({ inputDir, inputDirPrefix, outputDir })
+generateDocs({
+    inputDir,
+    inputDirPrefix,
+    outputDir,
+    copyToDir,
+    sidebarHeader,
+    documentor
+})
 console.log(`Documentation generated in ${outputDir}`)
-
-let copyToDir = program.copyToDir
-if (copyToDir !== undefined) {
-    copyToDir = path.resolve(cwd, copyToDir)
-    mkdir(copyToDir)
-    ncp(outputDir, copyToDir, err => {
-        if (err) {
-            throw err
-        }
-        console.log(`Documentation copied to ${copyToDir}`)
-    })
-}

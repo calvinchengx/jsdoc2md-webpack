@@ -8,9 +8,11 @@ class JSDoc2MdWebpackPlugin {
      * if changedFiles is provided, then only those files will be parsed and documentation re-generated for those files
      */
     constructor(options) {
-        this.inputDir = options.inputDir
         this.inputDirPrefix = options.inputDirPrefix || 'src'
+        this.inputDir = options.inputDir
         this.outputDir = options.outputDir
+        this.documentor = options.documentor
+        this.copyToDir = options.copyToDir
         this.changedFiles = options.changedFiles
     }
 
@@ -31,9 +33,11 @@ class JSDoc2MdWebpackPlugin {
                 // generate documentation from docstring in source code, into markdown
                 if (changedFiles !== '') {
                     let options = {
-                        inputDir: this.inputDir || context,
                         inputDirPrefix: this.inputDirPrefix,
+                        inputDir: this.inputDir || context,
                         outputDir: this.outputDir || resolve(context, 'docs'),
+                        documentor: this.documentor,
+                        copyToDir: this.copyToDir,
                         changedFiles
                     }
                     generateDocs(options)
@@ -42,11 +46,6 @@ class JSDoc2MdWebpackPlugin {
                 callback()
             }
         )
-    }
-
-    // our custom generateDocs function which uses jsdoc2md
-    static generateDocs(options) {
-        generateDocs(options)
     }
 }
 
