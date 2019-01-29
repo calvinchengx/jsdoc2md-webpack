@@ -1,5 +1,6 @@
 import generateDocs from './generate-docs'
 import { resolve } from 'path'
+import fs from 'fs'
 
 class JSDoc2MdWebpackPlugin {
     /**
@@ -11,7 +12,7 @@ class JSDoc2MdWebpackPlugin {
         this.inputDirPrefix = options.inputDirPrefix || 'src'
         this.inputDir = options.inputDir
         this.outputDir = options.outputDir
-        this.documentorConfig = options.documentorConfig
+        this.documentor = options.documentor
         this.copyToDir = options.copyToDir
         this.changedFiles = options.changedFiles
     }
@@ -30,13 +31,20 @@ class JSDoc2MdWebpackPlugin {
                     .map(file => `\n ${file}`)
                     .join('')
 
+                let documentorConfig
+                if (this.documentor) {
+                    documentorConfig = JSON.parse(
+                        fs.readFileSync(resolve(context, this.documentor))
+                    )
+                }
+
                 // generate documentation from docstring in source code, into markdown
                 if (changedFiles !== '') {
                     let options = {
                         inputDirPrefix: this.inputDirPrefix,
                         inputDir: this.inputDir || context,
                         outputDir: this.outputDir || resolve(context, 'docs'),
-                        documentorConfig: this.documentorConfig,
+                        documentorConfig,
                         copyToDir: this.copyToDir,
                         changedFiles
                     }
