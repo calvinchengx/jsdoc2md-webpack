@@ -1,6 +1,6 @@
 {
     "name": "jsdoc2md-webpack",
-    "version": "1.0.14",
+    "version": "1.0.15",
     "description": "",
     "main": "dist/index.js",
     "bin": {

@@ -24,6 +24,7 @@ function generateDocs(options) {
     if (copyToDir !== undefined) {
         copyToDir = resolve(inputDir, copyToDir)
     }
+
     if (changedFiles !== undefined) {
         sourceFiles = changedFiles
     }
@@ -32,6 +33,9 @@ function generateDocs(options) {
     const templateData = jsdoc2md.getTemplateDataSync({
         files: sourceFiles
     })
+
+    // Do nothing if there are no docstring to process, i.e. templateData is an empty array
+    if (templateData.length === 0) return
 
     // create outputDir if it does not exist
     try {

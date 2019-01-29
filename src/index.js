@@ -27,9 +27,13 @@ class JSDoc2MdWebpackPlugin {
                 // find all the js files that are changed (i.e. edited)
                 const changedTimes =
                     compilation.compiler.watchFileSystem.watcher.mtimes
-                const changedFiles = Object.keys(changedTimes)
-                    .map(file => `\n ${file}`)
-                    .join('')
+                const onlyJS = Object.keys(changedTimes).filter(file => {
+                    let ext = getFileExtension(file)
+                    if (ext === 'js' || ext === 'jsx') {
+                        return file
+                    }
+                })
+                const changedFiles = onlyJS.map(file => `\n ${file}`).join('')
 
                 let documentorConfig
                 if (this.documentor) {
@@ -55,6 +59,12 @@ class JSDoc2MdWebpackPlugin {
             }
         )
     }
+}
+
+function getFileExtension(file) {
+    const regexp = /\.([0-9a-z]+)(?:[\?#]|$)/i
+    const extension = file.match(regexp)
+    return extension && extension[1]
 }
 
 export default JSDoc2MdWebpackPlugin
